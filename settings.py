@@ -274,10 +274,10 @@ STATIC_URL = "/static/"
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(PROJECT_ROOT, STATIC_URL.strip("/"))
-#STATIC_ROOT = 'static'
+#STATIC_ROOT = 'uploads'
 
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'staticfiles'),
+    os.path.join(PROJECT_ROOT, 'uploads'),
 )
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -327,7 +327,7 @@ INSTALLED_APPS = (
     "intense",
     #"mezzanine_slides",
     #"mezzanine_bsbanners",
-    #"django_monetize",
+    "django_monetize",
 )
 
 # List of processors used by RequestContext to populate the context.
@@ -368,7 +368,7 @@ MIDDLEWARE_CLASSES = (
     # "mezzanine.core.middleware.SSLRedirectMiddleware",
     "mezzanine.pages.middleware.PageMiddleware",
     "mezzanine.core.middleware.FetchFromCacheMiddleware",
-    #"da_tracker.middleware.TrackerMiddleware",
+    "da_tracker.middleware.TrackerMiddleware",
 )
 
 # Store these package names here as they may change in the future since

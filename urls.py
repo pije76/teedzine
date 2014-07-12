@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
+from django.views.defaults import page_not_found
 
 from mezzanine.core.views import direct_to_template
 
@@ -14,6 +16,7 @@ admin.autodiscover()
 # to the project's homepage.
 
 urlpatterns = i18n_patterns("",
+
     # Change the admin prefix here to use an alternate URL for the
     # admin interface, which would be marginally more secure.
     ("^admin/", include(admin.site.urls)),
@@ -95,6 +98,7 @@ urlpatterns += patterns('',
 
     # ("^%s/" % settings.SITE_PREFIX, include("mezzanine.urls"))
 
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 )
 
 # Adds ``STATIC_URL`` to the context of error pages, so that error

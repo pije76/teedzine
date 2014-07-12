@@ -1,0 +1,41 @@
+Cartridge==0.9.0
+Django==1.6.5
+Mezzanine==3.1.6
+Pillow==2.0.0
+PyPDF2==1.22
+South==0.8.2
+argparse==1.2.1
+beautifulsoup4==4.1.3
+bleach==1.4
+boto==2.9.5
+dj-database-url==0.2.1
+dj-static==0.0.5
+django-appconf==0.6
+django-compressor==1.3
+django-extensions==1.2.2
+django-storages==1.1.8
+django-toolbelt==0.0.1
+feedparser==5.1.3
+filebrowser-safe==0.3.4
+future==0.9.0
+grappelli-safe==0.3.12
+gunicorn==0.17.4
+html5lib==0.95
+#-e git://github.com/mjtorn/mezzanine-categorylink.git@dd735b4c0fb92b3ae8b3849de7ac9ae84258c1b7#egg=mezzanine_categorylink-master
+#-e git://github.com/sebasmagri/mezzanine_polls.git@a870b83d21eb2a9e6ec0e2d5c84db85b370cc0d3#egg=mezzanine_polls-master
+#-e git://github.com/overshard/mezzanine-slides.git@6eea964c3cea7e7b9cd2e4ea4df87e02904b2bf8#egg=mezzanine_slides-master
+#-e git://github.com/renyi/mezzanine-themes.git@8a5dd6a11bd56bf09a9357078b9d1b2050ebe0c7#egg=mezzanine_themes-master
+mock==1.0.1
+oauthlib==0.6.3
+psycopg2==2.5
+python-dateutil==1.5
+pytz==2013b
+reportlab==3.1.8
+requests==2.3.0
+requests-oauthlib==0.4.1
+six==1.4.1
+sqlparse==0.1.11
+static==0.4
+tzlocal==1.0
+wsgiref==0.1.2
+xhtml2pdf==0.0.6
