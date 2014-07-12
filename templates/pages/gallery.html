@@ -1,0 +1,41 @@
+{% extends "pages/page.html" %}
+
+{% load mezzanine_tags staticfiles %}
+
+{% block main_class %}portfolio{% endblock %}
+
+{% block main_span %}12{% endblock %}
+
+{% block main %}
+{{ block.super }}
+
+{% editable page.gallery.content %}
+{{ page.gallery.content|richtext_filters|safe }}
+{% endeditable %}
+
+<ul class="thumbnails">
+{% with page.gallery.images.all as images %}
+{% for image in images %}
+    <li class="span4">
+        <div class="thumbnail">
+            <div class="portfolio-item">
+                <img src="{{ MEDIA_URL }}{% thumbnail image.file 728 424 %}" alt="{{ image.description }}">
+                <div class="folio-body">
+                    <div class="folio-info">
+                        <h5>{{ image.description }}</h5>
+                    </div>
+                    <div class="folio-zoom">
+                        <a href="{{ MEDIA_URL }}{{ image.file }}" rel="prettyPhoto[pp_gal]"><i class="icon-plus"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endfor %}
+{% endwith %}
+</ul>
+
+{% endblock %}
+
+{% block right_panel_outer %}{% endblock %}
+

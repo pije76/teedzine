@@ -1,0 +1,106 @@
+{% extends "pages/page.html" %}
+
+{% load mezzanine_tags %}
+
+{% block main_class %}portfolio{% endblock %}
+
+{% block main %}
+<div class="img-polaroid slider">
+    <div id="myCarousel" class="carousel slide">
+        <!-- Carousel items -->
+        <div class="carousel-inner">
+            <div class="active item">
+                <img src="{{ MEDIA_URL }}{% thumbnail portfolioitem.featured_image 760 444 %}" />
+            </div>
+            {% if portfolioitem.images.all %}
+            {% for image in portfolioitem.images.all %}
+            <div class="item">
+                <img src="{{ MEDIA_URL }}{% thumbnail image.file 760 444 %}" />
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% if portfolioitem.images.all %}
+        <!-- Carousel nav -->
+        <a class="carousel-control left" href="#myCarousel" data-slide="prev"><i class="icon-chevron-left"></i></a>
+        <a class="carousel-control right" href="#myCarousel" data-slide="next"><i class="icon-chevron-right"></i></a>
+        {% endif %}
+     </div>
+</div>
+
+{% if portfolioitem.subheading %}
+{% editable portfolioitem.subheading %}
+<h4>{{ portfolioitem.subheading }}</h4>
+{% endeditable %}
+<hr>
+{% endif %}
+
+{% editable portfolioitem.content %}
+{{ portfolioitem.content|richtext_filters|safe }}  
+{% endeditable %}
+
+{% if portfolioitem.href %}
+{% editable portfolioitem.href %}
+<h5><a href="{{ portfolioitem.href }}">View Project <i class="icon-arrow-right"></i></a></h5>
+{% endeditable %}
+{% endif %}
+
+{% endblock %}
+
+{% block right_panel %}
+<div class="project-widget well info-box">
+    {% if portfolioitem.short_description %}
+    <h4>SHORT DESCRIPTION</h4>
+    {% editable portfolioitem.short_description %}
+    <p>{{ portfolioitem.short_description }}</p>
+    {% endeditable %}
+    {% endif %}
+    {% if portfolioitem.categories.all and portfolioitem.short_description %}                   
+    <hr>
+    {% endif %}
+    {% if portfolioitem.categories.all %} 
+    <h4>Categories</h4>
+    <p>
+        {% for category in portfolioitem.categories.all %}
+        <span class="label label-info">{{ category }} </span>
+        {% endfor %}
+    </p>
+    {% endif %}
+    {% if portfolioitem.client_description %}
+    {% if portfolioitem.categories.all or portfolioitem.short_description %}
+    <hr>
+    {% endif %}
+    <h4>CLIENT</h4>
+    {% editable portfolioitem.client_description %}
+    {{ portfolioitem.client_description|richtext_filters|safe }}
+    {% endeditable %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block after_right %}{% if portfolioitem.related_items.all %}
+<div class="span12 releted-works">
+    <hr>
+    <h4>RELATED WORK</h4>                        
+    <ul class="thumbnails">
+        {% for item in portfolioitem.related_items.all %}                          
+        <li class="span3">
+            <div class="thumbnail">
+                <div class="portfolio-item">
+                    <img src="{{ MEDIA_URL }}{% thumbnail item.featured_image 528 308 %}" alt="">
+                    <div class="folio-body">
+                        <div class="folio-info">
+                            <h5><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></h5>
+                            <p>{% for category in item.categories.all %}{{ category }}{% if not forloop.last %} |{% endif %}{% endfor %}</p>
+                        </div>
+                        <div class="folio-zoom">
+                            <a href="{{ MEDIA_URL }}{{ item.featured_image }}" rel="prettyPhoto[pp_gal]"><i class="icon-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}{% endblock %}

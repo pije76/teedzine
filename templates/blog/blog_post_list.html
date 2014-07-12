@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load i18n future mezzanine_tags blog_tags keyword_tags disqus_tags %}
+
+{% block meta_title %}{% if page %}{{ page.richtextpage.meta_title }}{% else %}{% trans "Blog" %}{% endif %}{% endblock %}
+
+{% block meta_keywords %}{% metablock %}
+{% keywords_for page as keywords %}
+{% for keyword in keywords %}
+    {% if not forloop.first %}, {% endif %}
+    {{ keyword }}
+{% endfor %}
+{% endmetablock %}{% endblock %}
+
+{% block meta_description %}{% metablock %}
+{{ page.description }}
+{% endmetablock %}{% endblock %}
+
+{% block title_class %}blog-header{% endblock %}
+
+{% block title %}
+{% if page %}
+{% editable page.title %}{{ page.title }}{% endeditable %}
+{% else %}
+{% trans "Blog" %}
+{% endif %}
+{% endblock %}
+
+{% block subtitle %}
+{% if tag or category or year or month or author %}
+    {% block blog_post_list_filterinfo %}
+    <p>
+    {% if tag %}
+        {% trans "Viewing posts tagged" %} {{ tag }}
+    {% else %}{% if category %}
+        {% trans "Viewing posts for the category" %} {{ category }}
+    {% else %}{% if year or month %}
+        {% trans "Viewing posts from" %} {% if month %}{{ month }}, {% endif %}
+        {{ year }}
+    {% else %}{% if author %}
+        {% trans "Viewing posts by" %}
+        {{ author.get_full_name|default:author.username }}
+    {% endif %}{% endif %}{% endif %}{% endif %}
+    {% endblock %}
+    </p>
+{% else %}
+    {% if page %}
+    {% block blog_post_list_pagecontent %}
+    {% editable page.richtextpage.content %}
+    {{ page.richtextpage.content|richtext_filters|safe }}
+    {% endeditable %}
+    {% endblock %}
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% for blog_post in blog_posts.object_list %}
+
+<article>
+    <div class="row">
+        <div class="span1">                                    
+            <div class="post-date">
+                {% editable blog_post.publish_date %}
+                <div class="day">{{ blog_post.publish_date.day }}</div>
+                <div class="month">{{ blog_post.publish_date|date:"M" }}</div>
+                <div class="year">{{ blog_post.publish_date.year }}</div>
+                {% endeditable %}
+            </div>                                   
+        </div>
+        <div class="span7">
+
+            {% if settings.BLOG_USE_FEATURED_IMAGE and blog_post.featured_image %}
+            {% block blog_post_list_post_featured_image %}
+            <div class="img-polaroid">
+                 <a href="{{ blog_post.get_absolute_url }}"><img src="{{ MEDIA_URL }}{% thumbnail blog_post.featured_image 1320 660 %}" /></a> 
+            </div>
+            {% endblock %}
+            {% endif %}
+
+            {% block blog_post_list_post_title %}
+            {% editable blog_post.title %}                                   
+            <h3 class="blog-title"><a href="{{ blog_post.get_absolute_url }}">{{ blog_post.title }}</a></h3>
+            {% endeditable %}
+            {% endblock %}
+
+            {% block blog_post_list_post_metainfo %}
+            <div class="article_meta">
+                <ul class="meta-list">
+                    {% with blog_post.user as author %}
+                    <li><a href="{% url "blog_post_list_author" author %}"><span class="icon-user"></span> {{ author.get_full_name|default:author.username }}</a></li>
+                    {% endwith %}
+
+                    {% keywords_for blog_post as tags %}
+                    {% if tags %}
+                    <li>
+                    {% for tag in tags %}
+                    <a href="{% url "blog_post_list_tag" tag.slug %}" class="tag"><span class="icon-tags"></span> {{ tag }}</a>
+                    {% endfor %}
+                    </li>
+                    {% endif %}
+                    <li>
+                </ul>
+            </div>
+            {% endblock %}
+
+            {% block blog_post_list_post_content %}
+            {% editable blog_post.content %}
+            {{ blog_post.description_from_content|safe }}
+            {% endeditable %}
+            {% endblock %}
+
+            <p><a href="{{ blog_post.get_absolute_url }}" class="btn btn-success">Read More <i class="icon-circle-arrow-right"></i></a></p>                      
+        </div>
+    </div>
+</article>
+{% if not forloop.last %}<hr>{% endif %}
+{% endfor %}
+
+{% pagination_for blog_posts %}
+
+{% endblock %}
+
+{% block right_panel %}
+{% include "blog/includes/filter_panel.html" %}
+{% endblock %}

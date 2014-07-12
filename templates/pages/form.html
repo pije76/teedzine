@@ -1,0 +1,29 @@
+{% extends "pages/page.html" %}
+
+{% load mezzanine_tags %}
+
+
+
+{% block meain %}
+    {% with page.form as page_form %}
+    {% editable page_form.content %}
+    {{ page_form.content|richtext_filters|safe }}
+    {% endeditable %}
+    {% endwith %}
+{% endblock %}
+
+
+{% block right_panel %}
+
+{% if request.GET.sent %}
+    {% editable page.form.response %}
+    {{ page.form.response|richtext_filters|safe }}
+    {% endeditable %}
+{% else %}
+    <form method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+        {% fields_for form %}
+        <input class="btn btn-success" type="submit" value="{{ page.form.button_text }}">
+    </form>
+{% endif %}
+
+{% endblock %}

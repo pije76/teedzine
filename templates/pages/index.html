@@ -1,0 +1,150 @@
+{% extends "pages/page.html" %}
+{% load i18n static mezzanine_tags %}
+
+{% block meta_title %}{% trans "Home" %}{% endblock %}
+{% block title %}{% trans "Home" %}{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('#myCarousel').oneCarousel({
+        easeIn: 'rotateIn',
+        interval: 5000,
+        pause: 'hover'
+    });
+});
+</script>
+{% endblock %}
+
+{% block all_content %}
+
+    <!-- Start welcome-message -->           
+    <section class="welcome-message">
+        <div class="container">
+            <div class="hero-unit">
+                {% editable homepage.heading homepage.subheading %}<h4>{{ homepage.heading }} <br> <small>{{ homepage.subheading }}</small></h4>{% endeditable %}
+            </div>
+        </div>
+    </section>
+    <!-- End welcome-message -->
+    {% if homepage.slides.all %}
+    <!-- Start slider -->
+    <section class="slider">
+        <div class="container">
+            <div class="well">
+                <div id="myCarousel" class="carousel slide">
+                    <div class="carousel-inner">
+                        {% for slide in homepage.slides.all %}
+                        <div class="{% if forloop.first %}active {% endif %}item">
+                            <img src="{{ MEDIA_URL }}{% thumbnail slide.image 1160 526 %}" />
+                            <div class="carousel-caption animation">
+                                <h3 data-animate="fadeInDownBig" class="caption-black">{% if slide.link %}<a class="inherit-color" href="{{ slide.link }}">{{ slide.title }}</a>{% else %}{{ slide.title }}{% endif %}</h3>
+                                <p data-animate="fadeInRightBig" class="caption-black-small">{{ slide.content }}</p>
+                            </div>                                    
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Carousel nav -->
+                    <a class="carousel-control left" href="#myCarousel" data-slide="prev"><i class="icon-chevron-left"></i></a>
+                    <a class="carousel-control right" href="#myCarousel" data-slide="next"><i class="icon-chevron-right"></i></a>
+                </div>
+            </div>               
+        </div>
+    </section>
+    <!-- End slider -->
+    {% endif %}
+    {% if homepage.boxes.all %}
+    <!-- Start services -->
+    <section class="services">
+        <div class="container">
+            <div class="row">
+                {% for box in homepage.boxes.all %}
+                <div class="span3">
+                    {% editable box.icon box.title box.content box.link %}
+                    <div class="well well-small">
+                        <span class="service-icon"><i class="{{ box.icon }}"></i></span>
+                        <h5>{{ box.title }}</h5>
+                        <p>{{ box.content }}</p>
+                        {% if box.link %}<a class="btn btn-mini" href="{{ box.link }}">Read More</a>{% endif %}
+                    </div>
+                    {% endeditable %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <!-- End services -->
+    {% endif %}
+    {% if homepage.featured_portfolio %}
+    <!-- Start portfolio -->
+    <section class="portfolio">
+        <div class="container">  
+            <hr class="divider-home">              
+            <div class="row">
+                <div class="span3">
+                    <div class="section-overview">
+                        {% editable homepage.featured_portfolio_header %}<h5><span><i class="icon-minus"></i></span> {{ homepage.featured_portfolio_header }}</h5>{% endeditable %}
+                        <hr>
+                        {% editable homepage.featured_portfolio_lead %}{% if homepage.featured_portfolio_lead %}<p>{{ homepage.featured_portfolio_lead }}</p>{% endif %}{% endeditable %}
+                        <a class="btn btn-mini btn-success" href="{{ homepage.featured_portfolio.get_absolute_url }}">View Our Portfolio</a>  
+                    </div>
+                </div>
+                <div class="span9">
+                    <ul class="thumbnails">
+                        {% for item in items %}
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <div class="portfolio-item">
+                                    <img src="{{ MEDIA_URL }}{% thumbnail item.featured_image 528 308 %}" alt="">
+                                    <div class="folio-body">
+                                        <div class="folio-info">
+                                            <h5><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></h5>
+                                            <p>{% for category in item.categories.all %}{{ category }}{% if not forloop.last %} |{% endif %}{% endfor %}</p>
+                                        </div>
+                                        <div class="folio-zoom">
+                                            <a href="{{ MEDIA_URL }}{{ item.featured_image }}" rel="prettyPhoto[pp_gal]"><i class="icon-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End portfolio -->
+    {% endif %}
+    {% if homepage.clients.all %}
+    <!-- Start clients -->
+    <section class="clients">
+        <div class="container">
+            <hr class="divider-home">
+            <div class="row">
+                <div class="span3">
+                    <div class="section-overview">
+                        {% editable homepage.our_clients_header %}<h5><span><i class="icon-minus"></i></span> {{ homepage.our_clients_header }}</h5>  {% endeditable %}
+                        <hr>
+                        {% editable homepage.our_clients_lead %}{% if homepage.our_clients_lead %}<p>{{ homepage.our_clients_lead }}</p>{% endif %}{% endeditable %}
+                    </div>
+                </div>
+                <div class="span9">
+                    <div class="row">
+                        {% for client in homepage.clients.all %}
+                        <div class="span3">
+                            <div class="well">
+                                {% if client.link %}<a href="{{ client.link }}">{% endif %}
+                                <img src=" {{ MEDIA_URL }}{% thumbnail client.image 536 294 %}" />
+                                {% if client.link %}</a>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End clients -->
+    {% endif %} 
+{% endblock %}

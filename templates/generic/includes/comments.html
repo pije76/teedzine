@@ -1,0 +1,52 @@
+{% load i18n mezzanine_tags comment_tags %}
+<div id="comments" class="well comment-box">
+    <div class="comment-header">
+        <div class="row">
+            <div class="span1">
+                 <span><i class="icon-comments"></i></span>
+            </div>
+            <div class="span5">
+                <h4>{{ object_for_comments.comments_count }} Comments <br> <small><a href="">Leave a Comment</a></small></h4>
+            </div>
+        </div>     
+    </div>                            
+    <hr>
+    {% if settings.COMMENTS_DISQUS_SHORTNAME %}
+    {% include "generic/includes/disqus_comments.html" %}
+    {% else %}
+    <script>
+    $(function() {
+        $('.reply').click(function() {
+            var form;
+            $('.reply-form').hide();
+            form = $(this).attr('href');
+            $(form).toggle(400);
+        });
+    });
+    </script>
+    <style>.input_id_honeypot {display:none !important;}</style>
+    {% comment_thread object_for_comments %}
+    <div class="comment-header">
+        <div class="row">
+            <div class="span1">
+                 <span><i class="icon-comment"></i></span>
+            </div>
+            <div class="span5">
+                <h4>Leave a Comment <br> <small>What's on your mind? Fill out the form below to let us know.</small></h4>
+            </div>
+        </div>     
+    </div>
+    <hr>
+    <div class="comment-form">
+        <form method="post" id="comment" action="{{ comment_url }}#comment">
+            {% if not request.POST.replied_to %}
+            {% fields_for posted_comment_form %}
+            {% else %}
+            {% fields_for unposted_comment_form %}
+            {% endif %}
+
+                <input class="btn btn-success" type="submit" value="{% trans "Comment" %}">
+        </form>
+    </div>
+    {% endif %}
+</div>

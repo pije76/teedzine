@@ -1,0 +1,49 @@
+{% extends "pages/page.html" %}
+
+{% load mezzanine_tags staticfiles %}
+
+{% block main_class %}portfolio{% endblock %}
+
+{% block main_span %}12{% endblock %}
+
+{% block main %}
+
+{% if categories %}
+<div id="filters">
+    <ul class="portfolio-filter">
+        <li><a href="#" data-filter="*" class="selected">All</a></li>
+        {% for category in categories %}
+        <li><a href="#" data-filter=".{{ category.slug }}">{{ category.title }}</a></li>
+        {% endfor %}
+    </ul>     
+</div>      
+{% endif %}
+
+<ul class="thumbnails">
+{% with page.gallery.images.all as images %}
+{% for item in items %}
+    {% with item.categories.all as item_cats %}
+    <li class="span{{ page.portfolio.columns }} {% for category in item_cats %} {{ category.slug }}{% endfor %}">
+        <div class="thumbnail">
+            <div class="portfolio-item">
+                <img src="{{ MEDIA_URL }}{% thumbnail item.featured_image 1128 658 %}" alt="{{ image.description }}">
+                <div class="folio-body">
+                    <div class="folio-info">
+                        <h5><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></h5>
+                        <p>{% for category in item_cats %}{{ category }}{% if not forloop.last %} |{% endif %}{% endfor %}</p>
+                    </div>
+                    <div class="folio-zoom">
+                        <a href="{{ MEDIA_URL }}{{ item.featured_image }}" rel="prettyPhoto[pp_gal]"><i class="icon-plus"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% endwith %}
+{% endfor %}
+{% endwith %}
+</ul>
+
+{% endblock %}
+
+{% block right_panel_outer %}{% endblock %}

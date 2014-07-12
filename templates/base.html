@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %}>
+{% load pages_tags mezzanine_tags i18n future staticfiles blog_tags shop_tags %}
+<head>
+
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <title>{% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %}</title>
+    <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
+
+    {% ifinstalled mezzanine.blog %}
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="{% url "blog_post_feed" "rss" %}">
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="{% url "blog_post_feed" "atom" %}">
+    {% endifinstalled %}
+
+    <link href = '//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,800' rel = 'stylesheet' type = 'text/css'>
+
+
+    {% compress css %}
+    <!-- CSS Stylesheets -->
+    <link href="{% static "css/bootstrap.2.2.1.css" %}" rel="stylesheet">
+    <link href="{% static "css/bootstrap-responsive.2.2.1.css" %}" rel="stylesheet">
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
+    <link href="{% static "css/font-awesome.css" %}" rel="stylesheet">
+    <link href="{% static "css/animate.css" %}" rel="stylesheet">
+    <link href="{% static "css/prettyPhoto.css" %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+    {% endcompress %}
+
+    {% compress js %}
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static "js/jquery-1.8.3.js" %}"></script>
+    <script src="{% static "js/bootstrap.2.2.1.min.js" %}"></script>
+    <script src="{% static "js/bootstrap-extras.js" %}"></script>
+    <script src="{% static "js/jquery.onecarousel.min.js" %}"></script>
+    <script src="{% static "js/jflickrfeed.js" %}"></script>
+    <script src="{% static "js/jquery.prettyPhoto.js" %}"></script>
+    <script src="{% static "js/jquery.fitvids.js" %}"></script>
+    <script src="{% static "js/jquery.isotope.min.js" %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var $menu_select = $("<select />");
+            $("<option />", { "selected": "selected", "value": "", "text": "Site Navigation" }).appendTo($menu_select);
+            $menu_select.appendTo(".header .navbar-inner");
+
+            $(".header .navbar-inner ul li a").each(function () {
+                var menu_url = $(this).attr("href");
+                var menu_text = $(this).text();
+                if ($(this).parents("li").length == 2) { menu_text = '- ' + menu_text; }
+                if ($(this).parents("li").length == 3) { menu_text = "-- " + menu_text; }
+                if ($(this).parents("li").length > 3) { menu_text = "--- " + menu_text; }
+                $("<option />", { "value": menu_url, "text": menu_text }).appendTo($menu_select)
+            });
+
+            field_id = ".header .navbar-inner select";
+            $(field_id).change(function () {
+                value = $(this).attr('value');
+                window.location = value;
+                //go
+            });
+            // cache container
+            var $container = $('.portfolio .thumbnails');
+            var $filter = $('.portfolio-filter');
+            // initialize isotope
+            $container.imagesLoaded( function(){
+                $container.isotope({
+                    // options...
+                    filter: '*'
+                });
+            });
+            // filter items when filter link is clicked
+            $('#filters a').click(function () {
+                var selector = $(this).attr('data-filter');
+                $container.isotope({ filter: selector });
+                return false;
+            });
+            // update columnWidth on window resize
+            $(window).smartresize(function () {
+                $container.isotope('reLayout');
+            });
+            // Filter items when filter link is clicked
+            $filter.find('a').click(function () {
+                var selector = $(this).attr('data-filter');
+                $filter.find('a').removeClass('selected');
+                $(this).addClass('selected');
+            });
+            $("a[rel^='prettyPhoto']").prettyPhoto();
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+    {% endcompress %}
+    {% if settings.FLICKR_ID %}
+    {# moved this out of the js block becasue something about it was breaking compression #}
+    <script>
+    $(document).ready(function() {
+        // http://www.gethifi.com/blog/a-jquery-flickr-feed-plugin <- jflickrfeed.js documentation
+        $('.flickr').jflickrfeed({
+            limit: 6,
+            qstrings: {
+                id: '{{ settings.FLICKR_ID }}'
+            },
+            itemTemplate:
+            '<li class="span1">' +
+                '<a href="{% templatetag openvariable %}image_b{% templatetag closevariable %}"><img src="{% templatetag openvariable %}image_s{% templatetag closevariable %}" alt="{% templatetag openvariable %}title{% templatetag closevariable %}" /></a>' +
+            '</li>'
+        });
+    });
+    </script>
+    {% endif %}
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {% block extra_head %}{% endblock %}
+
+</head>
+<body id="{% block body_id %}body{% endblock %}">
+    <!-- Start header -->
+    <header class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="brand-wrapper">
+                        <a class="brand" href="/"></a>
+                    </div>
+                    {% page_menu "pages/menus/dropdown.html" %}
+                </div>
+            </div>
+        </div>
+    </header>
+    {% blog_recent_posts 5 as recent_posts %}
+    {% block all_content %}
+    <section class="section-page-header">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <div class="page-header {% block title_class %}{% endblock %}">
+                        <h4>— {% block title %}{% endblock %} —</h4>
+                        {% block subtitle %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+            <img src="{% static "images/divider_shadow.png" %}" title="" alt="">
+        </div>
+    </section>
+    <section class="{% block main_class %}{% endblock %}">
+        <div class="container">
+            <div class="row">
+                <div class="span{% block main_span %}8{% endblock %}">
+                    {% block main %}{% endblock %}
+                </div>
+                {% block right_panel_outer %}
+                <div class="span4">
+                    {% block right_panel %}{% include "blog/includes/filter_panel.html" %}{% endblock %}
+                </div>
+                {% endblock %}
+                {% block after_right %}{% endblock %}
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <!-- Start footer -->
+    <footer class="footer">
+        <div class="container">
+             <div class="row">
+                 <div class="span3 about">
+                    <h5>About Us</h5>
+                    <p>teeDzine are passionate about fan, novelty, &amp; awesome design and we appreciate all things creative. We design &amp; sell high quality tshirt with custom designs at very competitive price! Our tshirt are limited edition &amp; we also ship worldwide.</p>
+                    <br />
+                    <p>We were established in 2014 with the simple vision of bringing together tshirt designed for around the world. We create customized tshirt that illustrate your unique lifestyle.</p>
+                    <br />
+                    <p>If you have a design idea for tshirt then send us a message. If it's good, we'll print &amp; send you a FREE shirt!</p>
+                    <!-- <br />
+                    <p>Since we´re the affiliate partner of <a href="http://teespring.com/invites/veh8y9">Teespring</a>, so if you´re have experiencing issues or questions then you can contact them directly.</p>
+                    -->
+                <dl>
+                 <dt>Our Office:</dt>
+                 <dd>
+                     <strong>teeDzine</strong><br>
+                     Graha Jalayudha AA 1/8 Ciangsana<br>
+                     Bogor, Jawa Barat<br>
+                     Indonesia - 16968
+                 </dd>
+                 <dt>E-mail:</dt>
+                 <dd><a href="mailto:admin@teedzine.com">admin@teedzine.com</a></dd>
+                </dl>
+                 </div>
+                 <div class="span3 recent-post">
+                     <h5>Recent Posts</h5>
+                     {% if recent_posts %}
+                     <ul>
+                        {% for post in recent_posts|slice:":3" %}
+                         <li>
+                             <div class="row">
+                                 <div class="span1">
+                                     <a href="{{ post.get_absolute_url }}"><img src="{{ MEDIA_URL }}{% thumbnail post.featured_image 140 140 %}" alt="" /></a>
+                                 </div>
+                                 <div class="recent-body">
+                                     <a href="{{ post.get_absolute_url }}">{{ post.title }}</a><br>
+                                     <em><small>{% blocktrans with sometime=post.publish_date|timesince %}{{ sometime }} ago{% endblocktrans %}</small></em>
+                                 </div>
+                             </div>
+                         </li>
+                         {% endfor %}
+                     </ul>
+                     {% else %}
+                     <p>No posts yet, check back soon!</p>
+                     {% endif %}
+                </div>
+                <div class="span3 twitter-widget">
+                     {# replace this code with your own twitter widget which can be set up here https://twitter.com/settings/widgets #}
+                <a class="twitter-timeline"  href="https://twitter.com/teedzine"  data-widget-id="485791249031372800">Tweets by @teeDzine</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End footer -->
+    <!-- Start socket -->
+    <section class="socket">
+        <div class="container">
+            <div class="row">
+                <div class="span6">
+                    <span>Copyright © {% now "Y" %} by <a href="http://teedzine.com">teeDzine</a> - All Rights Reserved.</span>
+                </div>
+                <div class="span6">
+                    <ul class="social-links">
+                        <li>Stay Connected</li>
+                        {% if settings.SOCIAL_LINK_FACEBOOK %}<li><a target="_blank" href="{{ settings.SOCIAL_LINK_FACEBOOK }}"><i class="icon-facebook"></i></a></li>{% endif %}
+                        {% if settings.SOCIAL_LINK_TWITTER %}<li><a target="_blank" href="{{ settings.SOCIAL_LINK_TWITTER }}"><i class="icon-twitter"></i></a></li>{% endif %}
+                        {% if settings.SOCIAL_LINK_GOOGLE %}<li><a target="_blank" href="{{ settings.SOCIAL_LINK_GOOGLE }}"><i class="icon-google-plus"></i></a></li>{% endif %}
+                        {% if settings.SOCIAL_LINK_LINKEDIN %}<li><a target="_blank" href="{{ settings.SOCIAL_LINK_LINKEDIN }}"><i class="icon-linkedin"></i></a></li>{% endif %}
+                        {% if settings.SOCIAL_LINK_PINTEREST %}<li><a target="_blank" href="{{ settings.SOCIAL_LINK_PINTEREST }}"><i class="icon-pinterest"></i></a></li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% include "includes/footer_scripts.html" %}
+
+</body>
+</html>
